@@ -28,7 +28,6 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
 COPY rootfs /
-
-VOLUME      /app
-WORKDIR     /app
-ENTRYPOINT  ["/builder.sh"]
+RUN chmod +x /builder.sh
+RUN chmod +x /common.sh
+ENTRYPOINT "/builder.sh"

@@ -40,4 +40,6 @@ do
   fi
 done
 
+echo "Binaries built :: $(ls .build/)"
 exit 0
+
