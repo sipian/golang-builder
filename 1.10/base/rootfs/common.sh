@@ -18,8 +18,18 @@ set -eo pipefail
 # This is a Makefile based building processus
 [[ ! -e "./Makefile" ]] && echo "Error: A Makefile with 'build' and 'test' targets must be present into the root of your source files" && exit 1
 
-[[ -z "${PLUGIN_PATH}" ]] && echo "Error: path tag is mandatory" && exit 1
-repoName="${PLUGIN_PATH}"
+#installing golang
+[[ -z "${PLUGIN_GOVERSION}" ]] && GOLANG_VERSION="1.10" || GOLANG_VERSION="${PLUGIN_GOVERSION}"
+curl -fsSL "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" -o golang.tar.gz \
+	&& tar -C /usr/local -xzf golang.tar.gz \
+	&& rm golang.tar.gz
+
+export GOPATH="/go"
+export PATH="$GOPATH/bin:/usr/local/go/bin:$PATH"
+mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+echo "go version :: $(go version)"
+#running tests
+repoName="github.com/prometheus/prometheus"
 
 if [[ -z "${PLUGIN_TEST}" ]]; then
   tests=0
@@ -29,11 +39,11 @@ elif [ "${PLUGIN_TEST}" = "true" ]; then
 	  	tests=0
 fi
 
-goarchs=("linux/armv5" "linux/arm64")
-
-# goarchs=("linux/amd64" "linux/386" "darwin/amd64" "darwin/386" "windows/amd64" "windows/386" "freebsd/amd64" "freebsd/386" "openbsd/amd64" "openbsd/386" "netbsd/amd64" 
-# "netbsd/386" "dragonfly/amd64" "linux/armv5" "linux/armv6" "linux/armv7" "linux/arm64" "freebsd/armv6" "freebsd/armv7" "openbsd/armv7" "netbsd/armv6" "netbsd/armv7"
-# "linux/ppc64" "linux/ppc64le" "linux/mips64" "linux/mips64le")
+if [[ -z "${PLUGIN_ARCH}" ]]; then
+	goarchs=("linux/amd64")
+else
+	IFS=', ' read -r -a goarchs <<< "$PLUGIN_ARCH"
+fi
 
 echo "repoName : $repoName"
 echo "Testing Status : $tests"
