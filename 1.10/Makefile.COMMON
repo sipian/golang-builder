@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-REPOSITORY    := quay.io/prometheus
+REPOSITORY    := sipian
 NAME          := golang-builder
 BRANCH        := $(shell git rev-parse --abbrev-ref HEAD)
 SUFFIX        ?= -$(subst /,-,$(BRANCH))
@@ -20,8 +20,8 @@ DIRNAME       := $(shell basename $(CURDIR))
 PARENTDIRNAME := $(shell basename $(shell dirname $(CURDIR)))
 
 build:
-	@echo ">> building $(REPOSITORY)/$(NAME):$(VERSION)-$(DIRNAME)$(SUFFIX)"
-	@docker build -t "$(REPOSITORY)/$(NAME):$(VERSION)-$(DIRNAME)$(SUFFIX)" .
-	@docker tag "$(REPOSITORY)/$(NAME):$(VERSION)-$(DIRNAME)$(SUFFIX)" "$(REPOSITORY)/$(NAME):$(PARENTDIRNAME)-$(DIRNAME)$(SUFFIX)"
+	@echo ">> building $(REPOSITORY)/$(NAME):$(DIRNAME)$(SUFFIX)"
+	@docker build -t "$(REPOSITORY)/$(NAME):$(DIRNAME)$(SUFFIX)" .
+	@docker tag "$(REPOSITORY)/$(NAME):$(DIRNAME)$(SUFFIX)" "$(REPOSITORY)/$(NAME):$(DIRNAME)$(SUFFIX)"
 
 .PHONY: build
